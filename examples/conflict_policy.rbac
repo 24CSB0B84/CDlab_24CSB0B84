@@ -1,0 +1,18 @@
+role Accountant {
+    permissions read_financials;
+}
+
+role Trader {
+    permissions execute_trades;
+}
+
+role Auditor {
+    inherits Accountant; 
+    permissions read_financials; 
+}
+
+conflict Accountant and Trader;
+
+user alice engages Accountant, Trader;
+user bob engages Auditor;
+user charlie engages unknown_role;

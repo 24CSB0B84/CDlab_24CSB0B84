@@ -1,0 +1,51 @@
+# Week 7 – Role Conflict Detection Test Policy
+# =============================================
+# This policy exercises all detection scenarios:
+#   • Direct SoD conflict    (alice: Accountant + Trader)
+#   • Inherited SoD conflict (dave: SeniorAccountant inherits Accountant -> conflicts Trader)
+#   • Redundant permission   (Auditor explicitly lists read_financials already in Accountant)
+#   • Unknown role reference (charlie -> ghost_role)
+#   • Clean user             (bob has only Auditor, no conflicts)
+
+# ---------- Permissions ----------
+permission read_financials;
+permission write_financials;
+permission execute_trades;
+permission approve_trades;
+permission audit_log;
+permission admin_users;
+
+# ---------- Roles ----------
+role Accountant {
+    permissions read_financials, write_financials;
+}
+
+role SeniorAccountant {
+    inherits Accountant;
+    permissions approve_trades;
+}
+
+role Trader {
+    permissions execute_trades;
+}
+
+role Auditor {
+    inherits Accountant;
+    permissions read_financials, audit_log;
+}
+
+role Admin {
+    inherits SeniorAccountant;
+    permissions admin_users;
+}
+
+# ---------- SoD Constraints ----------
+conflict Accountant and Trader;
+conflict Admin and Auditor;
+
+# ---------- Users ----------
+user alice   engages Accountant, Trader;
+user bob     engages Auditor;
+user charlie engages ghost_role;
+user dave    engages SeniorAccountant, Trader;
+user eve     engages Admin, Auditor;

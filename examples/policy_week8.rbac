@@ -1,0 +1,66 @@
+# Week 8 – Privilege Escalation Detection Test Policy
+# ====================================================
+# Exercises:
+#   • Multi-level hierarchy (Intern -> Developer -> Lead -> Admin)
+#   • Escalation path: Intern gains delete_data, admin_users via chain
+#   • Dangerous combos: write+delete, execute+approve, admin+audit
+#   • Lateral escalation: Analyst can reach Trader perms via SeniorAnalyst
+#   • Clean user: viewer has only read, no escalation risk
+
+# ---------- Permissions ----------
+permission read_data;
+permission write_data;
+permission delete_data;
+permission approve_data;
+permission admin_users;
+permission audit_log;
+permission execute_trades;
+permission approve_trades;
+permission read_reports;
+
+# ---------- Role Hierarchy ----------
+role Intern {
+    permissions read_data;
+}
+
+role Developer {
+    inherits Intern;
+    permissions write_data;
+}
+
+role Lead {
+    inherits Developer;
+    permissions approve_data;
+}
+
+role Admin {
+    inherits Lead;
+    permissions delete_data, admin_users;
+}
+
+role Analyst {
+    permissions read_reports, execute_trades;
+}
+
+role SeniorAnalyst {
+    inherits Analyst;
+    permissions approve_trades;
+}
+
+role Auditor {
+    permissions audit_log, read_data;
+}
+
+role SuperAdmin {
+    inherits Admin;
+    permissions audit_log;
+}
+
+# ---------- Users ----------
+user alice   engages Intern;
+user bob     engages Developer;
+user charlie engages Lead;
+user dave    engages Admin;
+user eve     engages SeniorAnalyst;
+user frank   engages SuperAdmin;
+user grace   engages Auditor;

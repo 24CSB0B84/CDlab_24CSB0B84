@@ -1,0 +1,26 @@
+permission read_data;
+permission write_data;
+permission delete_data;
+permission audit_logs;
+
+role Intern {
+    permissions read_data;
+}
+
+role JuniorDev {
+    inherits Intern;
+    permissions write_data;
+}
+
+role SeniorDev {
+    inherits JuniorDev;
+    permissions delete_data;
+}
+
+role Auditor {
+    permissions audit_logs;
+}
+
+user alice engages SeniorDev;
+user bob engages Intern;
+user charlie engages Auditor;

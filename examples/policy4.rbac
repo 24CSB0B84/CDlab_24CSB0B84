@@ -1,0 +1,18 @@
+permission read;
+permission write;
+
+role DataEntry {
+    permissions read, write;
+}
+
+role Manager {
+    inherits DataEntry;
+    permissions approve; # 'approve' is not defined as permission
+}
+
+user dave engages Manager;
+    
+# Syntax error: missing semicolon
+role InvalidRole {
+    permissions read
+}

@@ -1,0 +1,24 @@
+permission login;
+permission view_profile;
+permission edit_profile;
+permission admin_panel;
+
+role Guest {
+    permissions login;
+}
+
+role User {
+    inherits Guest;
+    permissions view_profile, edit_profile;
+}
+
+role Admin {
+    inherits User;
+    permissions admin_panel;
+}
+
+user guest_user engages Guest;
+user regular_user engages User;
+user super_admin engages Admin;
+
+conflict User and Guest; 

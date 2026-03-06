@@ -1,0 +1,427 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> policy
+Rule 1     policy -> statement_list
+Rule 2     statement_list -> statement statement_list
+Rule 3     statement_list -> statement
+Rule 4     statement -> role_def
+Rule 5     statement -> perm_def
+Rule 6     statement -> user_def
+Rule 7     statement -> sod_def
+Rule 8     perm_def -> PERMISSION ID SEMI
+Rule 9     role_def -> ROLE ID LBRACE role_body RBRACE
+Rule 10    role_body -> role_attr role_body
+Rule 11    role_body -> <empty>
+Rule 12    role_attr -> INHERITS id_list SEMI
+Rule 13    role_attr -> PERMISSIONS id_list SEMI
+Rule 14    user_def -> USER ID ENGAGES id_list SEMI
+Rule 15    sod_def -> CONFLICT ID AND ID SEMI
+Rule 16    id_list -> ID COMMA id_list
+Rule 17    id_list -> ID
+
+Terminals, with rules where they appear
+
+AND                  : 15
+COMMA                : 16
+CONFLICT             : 15
+ENGAGES              : 14
+ID                   : 8 9 14 15 15 16 17
+INHERITS             : 12
+LBRACE               : 9
+PERMISSION           : 8
+PERMISSIONS          : 13
+RBRACE               : 9
+ROLE                 : 9
+SEMI                 : 8 12 13 14 15
+USER                 : 14
+error                : 
+
+Nonterminals, with rules where they appear
+
+id_list              : 12 13 14 16
+perm_def             : 5
+policy               : 0
+role_attr            : 10
+role_body            : 9 10
+role_def             : 4
+sod_def              : 7
+statement            : 2 3
+statement_list       : 1 2
+user_def             : 6
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . policy
+    (1) policy -> . statement_list
+    (2) statement_list -> . statement statement_list
+    (3) statement_list -> . statement
+    (4) statement -> . role_def
+    (5) statement -> . perm_def
+    (6) statement -> . user_def
+    (7) statement -> . sod_def
+    (9) role_def -> . ROLE ID LBRACE role_body RBRACE
+    (8) perm_def -> . PERMISSION ID SEMI
+    (14) user_def -> . USER ID ENGAGES id_list SEMI
+    (15) sod_def -> . CONFLICT ID AND ID SEMI
+
+    ROLE            shift and go to state 8
+    PERMISSION      shift and go to state 9
+    USER            shift and go to state 10
+    CONFLICT        shift and go to state 11
+
+    policy                         shift and go to state 1
+    statement_list                 shift and go to state 2
+    statement                      shift and go to state 3
+    role_def                       shift and go to state 4
+    perm_def                       shift and go to state 5
+    user_def                       shift and go to state 6
+    sod_def                        shift and go to state 7
+
+state 1
+
+    (0) S' -> policy .
+
+
+
+state 2
+
+    (1) policy -> statement_list .
+
+    $end            reduce using rule 1 (policy -> statement_list .)
+
+
+state 3
+
+    (2) statement_list -> statement . statement_list
+    (3) statement_list -> statement .
+    (2) statement_list -> . statement statement_list
+    (3) statement_list -> . statement
+    (4) statement -> . role_def
+    (5) statement -> . perm_def
+    (6) statement -> . user_def
+    (7) statement -> . sod_def
+    (9) role_def -> . ROLE ID LBRACE role_body RBRACE
+    (8) perm_def -> . PERMISSION ID SEMI
+    (14) user_def -> . USER ID ENGAGES id_list SEMI
+    (15) sod_def -> . CONFLICT ID AND ID SEMI
+
+    $end            reduce using rule 3 (statement_list -> statement .)
+    ROLE            shift and go to state 8
+    PERMISSION      shift and go to state 9
+    USER            shift and go to state 10
+    CONFLICT        shift and go to state 11
+
+    statement                      shift and go to state 3
+    statement_list                 shift and go to state 12
+    role_def                       shift and go to state 4
+    perm_def                       shift and go to state 5
+    user_def                       shift and go to state 6
+    sod_def                        shift and go to state 7
+
+state 4
+
+    (4) statement -> role_def .
+
+    ROLE            reduce using rule 4 (statement -> role_def .)
+    PERMISSION      reduce using rule 4 (statement -> role_def .)
+    USER            reduce using rule 4 (statement -> role_def .)
+    CONFLICT        reduce using rule 4 (statement -> role_def .)
+    $end            reduce using rule 4 (statement -> role_def .)
+
+
+state 5
+
+    (5) statement -> perm_def .
+
+    ROLE            reduce using rule 5 (statement -> perm_def .)
+    PERMISSION      reduce using rule 5 (statement -> perm_def .)
+    USER            reduce using rule 5 (statement -> perm_def .)
+    CONFLICT        reduce using rule 5 (statement -> perm_def .)
+    $end            reduce using rule 5 (statement -> perm_def .)
+
+
+state 6
+
+    (6) statement -> user_def .
+
+    ROLE            reduce using rule 6 (statement -> user_def .)
+    PERMISSION      reduce using rule 6 (statement -> user_def .)
+    USER            reduce using rule 6 (statement -> user_def .)
+    CONFLICT        reduce using rule 6 (statement -> user_def .)
+    $end            reduce using rule 6 (statement -> user_def .)
+
+
+state 7
+
+    (7) statement -> sod_def .
+
+    ROLE            reduce using rule 7 (statement -> sod_def .)
+    PERMISSION      reduce using rule 7 (statement -> sod_def .)
+    USER            reduce using rule 7 (statement -> sod_def .)
+    CONFLICT        reduce using rule 7 (statement -> sod_def .)
+    $end            reduce using rule 7 (statement -> sod_def .)
+
+
+state 8
+
+    (9) role_def -> ROLE . ID LBRACE role_body RBRACE
+
+    ID              shift and go to state 13
+
+
+state 9
+
+    (8) perm_def -> PERMISSION . ID SEMI
+
+    ID              shift and go to state 14
+
+
+state 10
+
+    (14) user_def -> USER . ID ENGAGES id_list SEMI
+
+    ID              shift and go to state 15
+
+
+state 11
+
+    (15) sod_def -> CONFLICT . ID AND ID SEMI
+
+    ID              shift and go to state 16
+
+
+state 12
+
+    (2) statement_list -> statement statement_list .
+
+    $end            reduce using rule 2 (statement_list -> statement statement_list .)
+
+
+state 13
+
+    (9) role_def -> ROLE ID . LBRACE role_body RBRACE
+
+    LBRACE          shift and go to state 17
+
+
+state 14
+
+    (8) perm_def -> PERMISSION ID . SEMI
+
+    SEMI            shift and go to state 18
+
+
+state 15
+
+    (14) user_def -> USER ID . ENGAGES id_list SEMI
+
+    ENGAGES         shift and go to state 19
+
+
+state 16
+
+    (15) sod_def -> CONFLICT ID . AND ID SEMI
+
+    AND             shift and go to state 20
+
+
+state 17
+
+    (9) role_def -> ROLE ID LBRACE . role_body RBRACE
+    (10) role_body -> . role_attr role_body
+    (11) role_body -> .
+    (12) role_attr -> . INHERITS id_list SEMI
+    (13) role_attr -> . PERMISSIONS id_list SEMI
+
+    RBRACE          reduce using rule 11 (role_body -> .)
+    INHERITS        shift and go to state 23
+    PERMISSIONS     shift and go to state 24
+
+    role_body                      shift and go to state 21
+    role_attr                      shift and go to state 22
+
+state 18
+
+    (8) perm_def -> PERMISSION ID SEMI .
+
+    ROLE            reduce using rule 8 (perm_def -> PERMISSION ID SEMI .)
+    PERMISSION      reduce using rule 8 (perm_def -> PERMISSION ID SEMI .)
+    USER            reduce using rule 8 (perm_def -> PERMISSION ID SEMI .)
+    CONFLICT        reduce using rule 8 (perm_def -> PERMISSION ID SEMI .)
+    $end            reduce using rule 8 (perm_def -> PERMISSION ID SEMI .)
+
+
+state 19
+
+    (14) user_def -> USER ID ENGAGES . id_list SEMI
+    (16) id_list -> . ID COMMA id_list
+    (17) id_list -> . ID
+
+    ID              shift and go to state 25
+
+    id_list                        shift and go to state 26
+
+state 20
+
+    (15) sod_def -> CONFLICT ID AND . ID SEMI
+
+    ID              shift and go to state 27
+
+
+state 21
+
+    (9) role_def -> ROLE ID LBRACE role_body . RBRACE
+
+    RBRACE          shift and go to state 28
+
+
+state 22
+
+    (10) role_body -> role_attr . role_body
+    (10) role_body -> . role_attr role_body
+    (11) role_body -> .
+    (12) role_attr -> . INHERITS id_list SEMI
+    (13) role_attr -> . PERMISSIONS id_list SEMI
+
+    RBRACE          reduce using rule 11 (role_body -> .)
+    INHERITS        shift and go to state 23
+    PERMISSIONS     shift and go to state 24
+
+    role_attr                      shift and go to state 22
+    role_body                      shift and go to state 29
+
+state 23
+
+    (12) role_attr -> INHERITS . id_list SEMI
+    (16) id_list -> . ID COMMA id_list
+    (17) id_list -> . ID
+
+    ID              shift and go to state 25
+
+    id_list                        shift and go to state 30
+
+state 24
+
+    (13) role_attr -> PERMISSIONS . id_list SEMI
+    (16) id_list -> . ID COMMA id_list
+    (17) id_list -> . ID
+
+    ID              shift and go to state 25
+
+    id_list                        shift and go to state 31
+
+state 25
+
+    (16) id_list -> ID . COMMA id_list
+    (17) id_list -> ID .
+
+    COMMA           shift and go to state 32
+    SEMI            reduce using rule 17 (id_list -> ID .)
+
+
+state 26
+
+    (14) user_def -> USER ID ENGAGES id_list . SEMI
+
+    SEMI            shift and go to state 33
+
+
+state 27
+
+    (15) sod_def -> CONFLICT ID AND ID . SEMI
+
+    SEMI            shift and go to state 34
+
+
+state 28
+
+    (9) role_def -> ROLE ID LBRACE role_body RBRACE .
+
+    ROLE            reduce using rule 9 (role_def -> ROLE ID LBRACE role_body RBRACE .)
+    PERMISSION      reduce using rule 9 (role_def -> ROLE ID LBRACE role_body RBRACE .)
+    USER            reduce using rule 9 (role_def -> ROLE ID LBRACE role_body RBRACE .)
+    CONFLICT        reduce using rule 9 (role_def -> ROLE ID LBRACE role_body RBRACE .)
+    $end            reduce using rule 9 (role_def -> ROLE ID LBRACE role_body RBRACE .)
+
+
+state 29
+
+    (10) role_body -> role_attr role_body .
+
+    RBRACE          reduce using rule 10 (role_body -> role_attr role_body .)
+
+
+state 30
+
+    (12) role_attr -> INHERITS id_list . SEMI
+
+    SEMI            shift and go to state 35
+
+
+state 31
+
+    (13) role_attr -> PERMISSIONS id_list . SEMI
+
+    SEMI            shift and go to state 36
+
+
+state 32
+
+    (16) id_list -> ID COMMA . id_list
+    (16) id_list -> . ID COMMA id_list
+    (17) id_list -> . ID
+
+    ID              shift and go to state 25
+
+    id_list                        shift and go to state 37
+
+state 33
+
+    (14) user_def -> USER ID ENGAGES id_list SEMI .
+
+    ROLE            reduce using rule 14 (user_def -> USER ID ENGAGES id_list SEMI .)
+    PERMISSION      reduce using rule 14 (user_def -> USER ID ENGAGES id_list SEMI .)
+    USER            reduce using rule 14 (user_def -> USER ID ENGAGES id_list SEMI .)
+    CONFLICT        reduce using rule 14 (user_def -> USER ID ENGAGES id_list SEMI .)
+    $end            reduce using rule 14 (user_def -> USER ID ENGAGES id_list SEMI .)
+
+
+state 34
+
+    (15) sod_def -> CONFLICT ID AND ID SEMI .
+
+    ROLE            reduce using rule 15 (sod_def -> CONFLICT ID AND ID SEMI .)
+    PERMISSION      reduce using rule 15 (sod_def -> CONFLICT ID AND ID SEMI .)
+    USER            reduce using rule 15 (sod_def -> CONFLICT ID AND ID SEMI .)
+    CONFLICT        reduce using rule 15 (sod_def -> CONFLICT ID AND ID SEMI .)
+    $end            reduce using rule 15 (sod_def -> CONFLICT ID AND ID SEMI .)
+
+
+state 35
+
+    (12) role_attr -> INHERITS id_list SEMI .
+
+    INHERITS        reduce using rule 12 (role_attr -> INHERITS id_list SEMI .)
+    PERMISSIONS     reduce using rule 12 (role_attr -> INHERITS id_list SEMI .)
+    RBRACE          reduce using rule 12 (role_attr -> INHERITS id_list SEMI .)
+
+
+state 36
+
+    (13) role_attr -> PERMISSIONS id_list SEMI .
+
+    INHERITS        reduce using rule 13 (role_attr -> PERMISSIONS id_list SEMI .)
+    PERMISSIONS     reduce using rule 13 (role_attr -> PERMISSIONS id_list SEMI .)
+    RBRACE          reduce using rule 13 (role_attr -> PERMISSIONS id_list SEMI .)
+
+
+state 37
+
+    (16) id_list -> ID COMMA id_list .
+
+    SEMI            reduce using rule 16 (id_list -> ID COMMA id_list .)
+

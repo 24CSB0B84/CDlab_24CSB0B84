@@ -1,0 +1,20 @@
+permission read_data;
+permission write_data;
+permission delete_data;
+
+role Intern {
+    permissions read_data;
+}
+
+role Developer {
+    inherits Intern;
+    permissions write_data;
+}
+
+role Admin {
+    inherits Developer;
+    permissions delete_data;
+}
+
+user alice engages Developer;
+user bob engages Intern;
