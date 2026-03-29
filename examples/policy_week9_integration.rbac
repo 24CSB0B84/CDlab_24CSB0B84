@@ -1,0 +1,93 @@
+# Week 9 – Integration Test Policy
+# ==================================
+# Purpose: Exercise the FULL integrated compiler pipeline (all 5 phases).
+# Contains a mix of:
+#   • Clean roles and users (for positive testing)
+#   • SoD conflicts (direct and inherited)
+#   • Redundant permissions
+#   • Unknown role reference
+#   • Privilege escalation paths
+#   • Dangerous permission combinations
+# Total expected issues:
+#   Conflict Detection : 1 error, 2 SoD conflicts, 1 warning
+#   Escalation         : 3 escalation paths, 2 dangerous combos
+
+# ── Permissions ──────────────────────────────────────────────────────────────
+permission read_data;
+permission write_data;
+permission delete_data;
+permission approve_data;
+permission execute_trades;
+permission approve_trades;
+permission audit_log;
+permission admin_users;
+
+# ── Role Hierarchy ────────────────────────────────────────────────────────────
+
+# Level 0 – base roles
+role Intern {
+    permissions read_data;
+}
+
+role Analyst {
+    permissions read_data, execute_trades;
+}
+
+role Auditor {
+    permissions audit_log, read_data;
+}
+
+# Level 1
+role Developer {
+    inherits Intern;
+    permissions write_data;
+}
+
+role SeniorAnalyst {
+    inherits Analyst;
+    permissions approve_trades;         # ← dangerous: execute + approve in same role
+}
+
+# Level 2
+role Lead {
+    inherits Developer;
+    permissions approve_data, delete_data;
+}
+
+# Level 3 – admin inherits entire chain
+role Admin {
+    inherits Lead;
+    permissions admin_users, audit_log;
+}
+
+# Redundant: Auditor already has read_data; BudgetReviewer re-declares it
+role BudgetReviewer {
+    inherits Auditor;
+    permissions read_data;              # ← redundant (inherited from Auditor)
+}
+
+# ── SoD Conflict Constraints ─────────────────────────────────────────────────
+conflict Developer and Admin;
+conflict Analyst and Auditor;
+
+# ── Users ─────────────────────────────────────────────────────────────────────
+
+# Clean users
+user alice   engages Intern;
+user bob     engages Developer;
+user carol   engages Auditor;
+
+# SoD violation: direct – dave holds Developer AND Admin
+user dave    engages Developer, Admin;
+
+# SoD violation: inherited – eve is Lead (inherits Developer) and also Admin
+user eve     engages Lead, Admin;
+
+# Dangerous combo user: frank is SeniorAnalyst → execute_trades + approve_trades
+user frank   engages SeniorAnalyst;
+
+# Unknown role reference bug: grace references a role that was never defined
+user grace   engages UnknownRole;
+
+# Clean – budget reviewing only
+user henry   engages BudgetReviewer;

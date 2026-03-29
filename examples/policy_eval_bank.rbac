@@ -1,0 +1,100 @@
+# Evaluation Policy 2: Banking / Finance RBAC
+# =============================================
+# Domain: Retail bank transaction and compliance system
+# Realistic roles: tellers, analysts, compliance, and IT admin
+# Designed to contain: 2 SoD violations, 1 redundant perm, 1 unknown ref,
+#                      3 escalation paths, 4 dangerous combos
+
+# ── Permissions ───────────────────────────────────────────────────────────────
+permission view_account;
+permission create_account;
+permission close_account;
+permission process_transaction;
+permission approve_transaction;
+permission execute_trades;
+permission approve_trades;
+permission write_financials;
+permission audit_transactions;
+permission freeze_account;
+permission admin_users;
+permission generate_report;
+
+# ── Role Hierarchy ─────────────────────────────────────────────────────────────
+# Level 0 - frontline
+role Teller {
+    permissions view_account, process_transaction;
+}
+
+role TraderJunior {
+    permissions view_account, execute_trades;
+}
+
+role Compliance {
+    permissions audit_transactions, view_account;
+}
+
+# Level 1
+role SeniorTeller {
+    inherits Teller;
+    permissions create_account, approve_transaction;    # process + approve in hierarchy
+}
+
+role Trader {
+    inherits TraderJunior;
+    permissions write_financials, approve_trades;       # dangerous: write + approve
+}
+
+role ComplianceOfficer {
+    inherits Compliance;
+    permissions freeze_account, generate_report;
+}
+
+# Level 2
+role BranchManager {
+    inherits SeniorTeller;
+    permissions close_account, write_financials;
+}
+
+role RiskManager {
+    inherits Trader;
+    permissions audit_transactions;                     # dangerous: execute + audit
+}
+
+# Level 3
+role ITAdmin {
+    inherits BranchManager;
+    permissions admin_users, audit_transactions;        # dangerous: admin + audit
+}
+
+# Redundant perm in role
+role SeniorCompliance {
+    inherits ComplianceOfficer;
+    permissions audit_transactions;                    # redundant (inherited)
+}
+
+# ── SoD Conflict Constraints ──────────────────────────────────────────────────
+conflict Trader and Compliance;
+conflict BranchManager and Compliance;
+
+# ── Users ──────────────────────────────────────────────────────────────────────
+# Clean users
+user alice_teller      engages Teller;
+user bob_trader        engages TraderJunior;
+user carol_compliance  engages Compliance;
+user david_mgr         engages BranchManager;
+
+# SoD violation 1: eve is Trader AND Compliance
+user eve               engages Trader, Compliance;
+
+# SoD violation 2: frank is BranchManager AND Compliance
+user frank             engages BranchManager, Compliance;
+
+# Dangerous combo user: grace is Trader (execute + approve_trades + write_financials)
+user grace             engages Trader;
+
+# Unknown role reference
+user henry             engages ChiefRiskOfficer;
+
+# Clean admin
+user ivan_admin        engages ITAdmin;
+user judy_risk         engages RiskManager;

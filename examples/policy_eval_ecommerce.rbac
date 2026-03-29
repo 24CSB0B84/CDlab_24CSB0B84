@@ -1,0 +1,111 @@
+# Evaluation Policy 3: E-Commerce Platform RBAC
+# ================================================
+# Domain: Online marketplace with sellers, buyers, and operations
+# Realistic roles: warehousing, sales, finance, and platform administration
+# Designed to contain: 2 SoD violations, 2 redundant perms, 1 unknown ref,
+#                      5 escalation paths, 2 dangerous combos
+
+# ── Permissions ───────────────────────────────────────────────────────────────
+permission view_orders;
+permission create_order;
+permission cancel_order;
+permission approve_refund;
+permission process_payment;
+permission approve_payment;
+permission view_inventory;
+permission update_inventory;
+permission delete_inventory;
+permission manage_sellers;
+permission run_promotions;
+permission view_analytics;
+permission admin_platform;
+
+# ── Role Hierarchy ─────────────────────────────────────────────────────────────
+# Level 0 - base
+role Customer {
+    permissions view_orders, create_order;
+}
+
+role WarehouseStaff {
+    permissions view_inventory, update_inventory;
+}
+
+role CustomerSupport {
+    permissions view_orders, approve_refund;
+}
+
+role FinanceAnalyst {
+    permissions view_analytics, process_payment;
+}
+
+# Level 1 - supervisors
+role OrderManager {
+    inherits Customer;
+    permissions cancel_order, approve_refund;            # create + approve in chain
+}
+
+role InventoryManager {
+    inherits WarehouseStaff;
+    permissions delete_inventory, view_analytics;        # write + delete dangerous
+}
+
+role PaymentProcessor {
+    inherits FinanceAnalyst;
+    permissions approve_payment;                         # process + approve: dangerous
+}
+
+role SellerManager {
+    inherits CustomerSupport;
+    permissions manage_sellers, run_promotions;
+}
+
+# Level 2 - senior managers
+role SalesManager {
+    inherits OrderManager;
+    permissions process_payment, run_promotions;
+}
+
+role OperationsManager {
+    inherits InventoryManager;
+    permissions manage_sellers, approve_payment;
+}
+
+# Level 3 - platform admin
+role PlatformAdmin {
+    inherits OperationsManager;
+    permissions admin_platform, view_analytics;          # redundant - InventoryManager already has it
+}
+
+# Another redundant role
+role SeniorSupport {
+    inherits CustomerSupport;
+    permissions view_orders;                             # redundant (already in CustomerSupport)
+    permissions approve_refund;                          # also redundant
+}
+
+# ── SoD Conflict Constraints ──────────────────────────────────────────────────
+conflict FinanceAnalyst and SellerManager;
+conflict PaymentProcessor and OrderManager;
+
+# ── Users ──────────────────────────────────────────────────────────────────────
+# Clean users
+user alice_cust     engages Customer;
+user bob_wh         engages WarehouseStaff;
+user carol_cs       engages CustomerSupport;
+user david_fin      engages FinanceAnalyst;
+
+# SoD violation 1: eve is FinanceAnalyst and SellerManager
+user eve            engages FinanceAnalyst, SellerManager;
+
+# SoD violation 2: frank is PaymentProcessor (inherits FinanceAnalyst) and OrderManager
+user frank          engages PaymentProcessor, OrderManager;
+
+# Dangerous combo: grace is InventoryManager (write + delete inventory)
+user grace          engages InventoryManager;
+
+# Unknown role reference
+user henry          engages MarketplaceAdmin;
+
+# Clean admins
+user ivan_ops       engages OperationsManager;
+user judy_admin     engages PlatformAdmin;

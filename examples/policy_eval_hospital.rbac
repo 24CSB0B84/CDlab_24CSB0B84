@@ -1,0 +1,110 @@
+# Evaluation Policy 1: Hospital / Healthcare RBAC
+# =================================================
+# Domain: Healthcare record management system
+# Realistic roles: patient care and administration staff
+# Designed to contain: 3 SoD violations, 2 redundant perms, 2 unknown refs,
+#                      4 escalation paths, 3 dangerous combos
+
+# ── Permissions ───────────────────────────────────────────────────────────────
+permission view_patient_records;
+permission edit_patient_records;
+permission delete_patient_records;
+permission prescribe_medication;
+permission approve_medication;
+permission access_billing;
+permission modify_billing;
+permission approve_billing;
+permission view_audit_trail;
+permission admin_staff;
+permission admin_system;
+permission discharge_patient;
+
+# ── Role Hierarchy ─────────────────────────────────────────────────────────────
+# Level 0 - base roles
+role Receptionist {
+    permissions view_patient_records, access_billing;
+}
+
+role Nurse {
+    permissions view_patient_records, edit_patient_records, prescribe_medication;
+}
+
+role Pharmacist {
+    permissions approve_medication, view_patient_records;
+}
+
+role Auditor {
+    permissions view_audit_trail, view_patient_records;
+}
+
+# Level 1 - senior roles
+role SeniorNurse {
+    inherits Nurse;
+    permissions discharge_patient;
+}
+
+role BillingOfficer {
+    inherits Receptionist;
+    permissions modify_billing;
+}
+
+role HeadPharmacist {
+    inherits Pharmacist;
+    permissions prescribe_medication;    # dangerous: prescribe + approve
+}
+
+# Level 2 - doctor and management
+role Doctor {
+    inherits SeniorNurse;
+    permissions prescribe_medication, approve_medication;   # dangerous combo
+}
+
+role BillingManager {
+    inherits BillingOfficer;
+    permissions approve_billing, view_audit_trail;          # write + approve billing
+}
+
+# Level 3 - administration
+role HospitalAdmin {
+    inherits Doctor;
+    permissions admin_staff, admin_system, view_audit_trail;
+}
+
+# Redundant: Auditor already has view_patient_records
+role SeniorAuditor {
+    inherits Auditor;
+    permissions view_patient_records;    # redundant
+    permissions view_audit_trail;        # also redundant
+}
+
+# ── SoD Conflict Constraints ──────────────────────────────────────────────────
+conflict Nurse and Pharmacist;
+conflict BillingOfficer and Auditor;
+conflict Doctor and Auditor;
+
+# ── Users ──────────────────────────────────────────────────────────────────────
+# Clean users
+user alice_rn      engages Nurse;
+user bob_pharm     engages Pharmacist;
+user carol_rec     engages Receptionist;
+user david_doc     engages Doctor;
+user eve_audit     engages Auditor;
+
+# SoD violation 1: frank is both a Nurse and Pharmacist
+user frank         engages Nurse, Pharmacist;
+
+# SoD violation 2: grace is BillingOfficer and Auditor
+user grace         engages BillingOfficer, Auditor;
+
+# SoD violation 3: hank is Doctor (inherits Nurse) and Auditor
+user hank          engages Doctor, Auditor;
+
+# Dangerous combo: ivan is HeadPharmacist (prescribe + approve)
+user ivan          engages HeadPharmacist;
+
+# Unknown role reference
+user judy          engages ChiefMedicalOfficer;
+user kevin         engages SurgeryTeam;
+
+# Clean admin
+user linda_admin   engages HospitalAdmin;

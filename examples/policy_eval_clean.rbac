@@ -1,0 +1,50 @@
+# Evaluation Policy 4: Clean / False-Positive Test Policy
+# =========================================================
+# Domain: University course management system
+# Purpose: This policy is intentionally CLEAN (zero violations).
+#          Used to measure false positive rate of the RBAC compiler.
+# Expected: 0 errors, 0 conflicts, 0 warnings, 0 escalation paths
+
+# ── Permissions ───────────────────────────────────────────────────────────────
+permission view_course;
+permission enroll_course;
+permission grade_submission;
+permission create_course;
+permission manage_enrollment;
+permission view_reports;
+permission admin_courses;
+
+# ── Role Hierarchy ─────────────────────────────────────────────────────────────
+role Student {
+    permissions view_course, enroll_course;
+}
+
+role TeachingAssistant {
+    inherits Student;
+    permissions grade_submission;
+}
+
+role Professor {
+    inherits TeachingAssistant;
+    permissions create_course, manage_enrollment;
+}
+
+role DepartmentHead {
+    inherits Professor;
+    permissions view_reports;
+}
+
+role RegistrarAdmin {
+    permissions admin_courses, manage_enrollment, view_reports;
+}
+
+# ── No SoD Constraints (none needed – clean policy) ──────────────────────────
+
+# ── Users ──────────────────────────────────────────────────────────────────────
+user alice_student   engages Student;
+user bob_ta          engages TeachingAssistant;
+user carol_prof      engages Professor;
+user david_head      engages DepartmentHead;
+user eve_admin       engages RegistrarAdmin;
+user frank_student   engages Student;
+user grace_ta        engages TeachingAssistant;
