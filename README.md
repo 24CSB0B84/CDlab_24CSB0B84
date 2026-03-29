@@ -276,7 +276,8 @@ python src/test_integration.py
 | 8 | Privilege Escalation | `escalation_detector.py` — graph-based escalation tracing |
 | 9 | Integration | `rbac_compiler.py`, `test_integration.py` — full pipeline |
 | 10 | Evaluation | `evaluate.py`, `generate_graphs.py` — metrics & graphs |
-| 11 | Report Generation | `report_generator.py` — Markdown + Mermaid.js reports |
+| 11 | Report Generation | `report_generator.py` |
+| 12 | Documentation | - |
 
 ---
 
